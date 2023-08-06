@@ -1,0 +1,150 @@
+CREATE SCHEMA VinotecaDT;
+
+USE VinotecaDT;
+
+CREATE TABLE PRODUCTO (
+    id_productoobj INT NOT NULL AUTO_INCREMENT,
+    VINO VARCHAR(20) NOT NULL,
+    PRIMARY KEY (id_producto)
+);
+	
+CREATE TABLE BODEGA (
+    id_bodega INT NOT NULL AUTO_INCREMENT,
+    BODEGA VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id_bodega)
+);
+
+CREATE TABLE RESERVA (
+    id_reserva INT NOT NULL AUTO_INCREMENT,
+    RESERVA VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id_reserva)
+);
+
+CREATE TABLE SUCURSAL (
+    id_sucursal INT NOT NULL AUTO_INCREMENT,
+    sucursal VARCHAR(10) NOT NULL,
+    PRIMARY KEY (id_sucursal)
+);
+
+CREATE TABLE UVA (
+    id_uva INT NOT NULL AUTO_INCREMENT,
+    uvarObj VARCHAR(40) NOT NULL,
+    PRIMARY KEY (id_uva)
+);
+
+CREATE TABLE productos_seleccionados (
+    id_uva_e INT NOT NULL AUTO_INCREMENT,
+    id_uva1 INT NOT NULL,
+    id_uva2 INT,
+    id_uva3 INT,
+    PRIMARY KEY (id_uva_e),
+    FOREIGN KEY (id_uva_malbec)
+        REFERENCES UVA (id_uva_malbec),
+    FOREIGN KEY (id_uva2)
+        REFERENCES UVA (id_uva_cabernetfranc),
+    FOREIGN KEY (id_uva3)
+        REFERENCES UVA (id_uva_sauvignon)
+);
+
+
+CREATE TABLE productos_seleccionados (
+    id_reserva INT NOT NULL AUTO_INCREMENT,
+    id_reserva1 INT NOT NULL,
+    id_reserva2 INT,
+    id_reserva3 INT,
+    PRIMARY KEY (id_reserva_e),
+    FOREIGN KEY (id_reserva1)
+        REFERENCES reserva2019 (id_reserva_2019),
+    FOREIGN KEY (id_reserva2)
+        REFERENCES reserva2018 (id_reserva_2018),
+    FOREIGN KEY (id_reserva3)
+        REFERENCES reserva2017 (id_reserva_2017)
+);
+
+
+CREATE TABLE Vino (
+    id_bodega INT NOT NULL AUTO_INCREMENT,
+    id_reserva INT NOT NULL,
+    id_sucursal INT NOT NULL,
+    id_uva_e INT NOT NULL,
+    PRIMARY KEY (id_vino),
+    FOREIGN KEY (id_uva)
+        REFERENCES UVA (id_uva),
+    FOREIGN KEY (id_reserva)
+        REFERENCES RESERVA (id_reserva),
+    FOREIGN KEY (id_sucursal)
+        REFERENCES SUCURSAL (id_sucursal),
+    FOREIGN KEY (id_uva_e)
+        REFERENCES productos_seleccionados (id_uva_e)
+);
+
+CREATE TABLE SUCURSAL (
+    id_ubicacion INT NOT NULL AUTO_INCREMENT,
+    codigo_postal VARCHAR(30) NOT NULL,
+    direccion VARCHAR(255) NOT NULL,
+    piso VARCHAR(10),
+    descripcion VARCHAR(255),
+    PRIMARY KEY (id_sucursal)
+);
+
+CREATE TABLE Contacto (
+    id_contacto INT NOT NULL AUTO_INCREMENT,
+    telefono VARCHAR(100),
+    email VARCHAR(255),
+    PRIMARY KEY (id_contacto)
+);
+
+CREATE TABLE Usuarios (
+    id_usuario INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    id_ubicacion INT NOT NULL,
+    id_contacto INT NOT NULL,
+    PRIMARY KEY (id_usuario),
+    CONSTRAINT FK_ContactodeUsuario FOREIGN KEY (id_contacto)
+        REFERENCES Contacto (id_contacto),
+    CONSTRAINT FK_UbicacionUsuario FOREIGN KEY (id_ubicacion)
+        REFERENCES Ubicacion (id_ubicacion)
+);
+
+CREATE TABLE Pedidos (
+    id_pedido INT NOT NULL AUTO_INCREMENT,
+    id_producto INT NOT NULL,
+    PRIMARY KEY (id_pedido),
+    FOREIGN KEY (id_producto)
+        REFERENCES producto (id_producto)
+);
+
+CREATE TABLE Ordenes (
+    id_orden INT NOT NULL AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    id_ubicacion INT NOT NULL,
+    id_pedido INT NOT NULL,
+    fecha_de_orden DATETIME NOT NULL,
+    comentario_de_pedido VARCHAR(255),
+    entregado BOOLEAN NOT NULL,
+    PRIMARY KEY (id_orden),
+    FOREIGN KEY (id_usuario)
+        REFERENCES Usuarios (id_usuario),
+    FOREIGN KEY (id_ubicacion)
+        REFERENCES Ubicacion (id_ubicacion),
+    FOREIGN KEY (id_pedido)
+        REFERENCES Pedidos (id_pedido)
+);
+
+CREATE TABLE Review (
+    id_review INT NOT NULL AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    id_vino INT NOT NULL,
+    id_contacto INT NOT NULL,
+    comentario VARCHAR(255),
+    calificacion INT,
+    fecha_publicacion DATETIME NOT NULL,
+    PRIMARY KEY (id_review),
+    CONSTRAINT FK_Review_user FOREIGN KEY (id_usuario)
+        REFERENCES Usuarios (id_usuario),
+    FOREIGN KEY (id_uva)
+        REFERENCES UVA (id_uva),
+    FOREIGN KEY (id_contacto)
+        REFERENCES Contacto (id_contacto)
+);
